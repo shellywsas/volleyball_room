@@ -5,30 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>חדר בריחה: אולם הכדורעף</title>
     
-    <!-- טעינת Tailwind CSS -->
+    <!-- טעינת Tailwind CSS לעיצוב -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- טעינת האייקונים -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
-        /* פונטים - כולל פונט כתב יד מציאותי בעברית (Caveat) */
-        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Heebo:wght@300;400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap');
         
         body {
             font-family: 'Heebo', sans-serif;
-            background-color: #0f172a;
+            background-color: #0f172a; /* כהה מסביב כדי להבליט את החדר */
             margin: 0;
-            overflow-x: hidden;
-        }
-
-        .handwriting {
-            font-family: 'Caveat', cursive;
-            font-size: 1.5rem;
         }
 
         .modal-overlay {
-            background-color: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(10px);
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
         }
 
         .pulse-error {
@@ -40,12 +34,13 @@
             50% { color: #dc2626; transform: scale(1.05); }
         }
 
-        /* --- עיצוב החדר המרכזי --- */
+        /* עיצוב החדר התלת-ממדי / מציאותי */
         .room-scene {
             position: relative;
             width: 100%;
             height: 65vh;
             min-height: 500px;
+            /* קיר לבנים אפור ורצפת פרקט חצי מבריקה */
             background: linear-gradient(to bottom, #334155 0%, #475569 55%, #b48455 55%, #92400e 100%);
             border-radius: 1rem;
             overflow: hidden;
@@ -53,6 +48,7 @@
             border: 8px solid #1e293b;
         }
 
+        /* קווי המגרש על הרצפה */
         .floor-lines {
             position: absolute;
             bottom: 0;
@@ -67,6 +63,7 @@
             pointer-events: none;
         }
 
+        /* חפצים לחיצים */
         .interactive-object {
             position: absolute;
             cursor: pointer;
@@ -79,6 +76,7 @@
             transform: scale(1.03) translateY(-5px);
         }
 
+        /* טולטיפ שמופיע בהובר */
         .obj-tooltip {
             position: absolute;
             bottom: 110%;
@@ -97,117 +95,66 @@
             z-index: 20;
         }
 
-        .interactive-object:hover .obj-tooltip { opacity: 1; }
+        .interactive-object:hover .obj-tooltip {
+            opacity: 1;
+        }
 
-        /* מיקומי החפצים בחדר */
-        .obj-door { top: 15%; right: 15%; width: 16%; height: 40%; background: linear-gradient(to right, #94a3b8, #cbd5e1); border: 6px solid #475569; border-radius: 4px 4px 0 0; display: flex; justify-content: center; }
+        /* עיצוב ספציפי לחפצים */
+        .obj-door {
+            top: 15%; right: 15%; width: 16%; height: 40%;
+            background: linear-gradient(to right, #94a3b8, #cbd5e1);
+            border: 6px solid #475569;
+            border-radius: 4px 4px 0 0;
+            display: flex; justify-content: center;
+        }
         .obj-door-window { width: 60%; height: 30%; background: #0f172a; margin-top: 15%; border: 3px solid #334155; opacity: 0.8; }
         .obj-door-handle { position: absolute; left: 10%; top: 50%; width: 10%; height: 5%; background: #1e293b; border-radius: 2px;}
         .obj-door-keypad { position: absolute; left: -25%; top: 40%; width: 15%; height: 12%; background: #1e293b; border: 2px solid #cbd5e1; border-radius: 4px; box-shadow: 0 0 10px rgba(239,68,68,0.5); display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; padding: 2px;}
         .keypad-btn { background: #334155; border-radius: 1px; }
 
-        .obj-whiteboard { top: 18%; left: 20%; width: 25%; height: 25%; background: #f8fafc; border: 8px solid #cbd5e1; border-radius: 4px; display: flex; flex-direction: column; padding: 10px; }
+        .obj-whiteboard {
+            top: 18%; left: 20%; width: 25%; height: 25%;
+            background: #f8fafc;
+            border: 8px solid #cbd5e1;
+            border-radius: 4px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; padding: 10px;
+        }
         .wb-text { height: 3px; background: #3b82f6; border-radius: 2px; margin-bottom: 6px; opacity: 0.6; }
 
-        .obj-locker { bottom: 45%; left: 5%; width: 12%; height: 45%; background: linear-gradient(to right, #64748b, #94a3b8); border: 3px solid #334155; display: flex; flex-direction: column; }
+        .obj-locker {
+            bottom: 45%; left: 5%; width: 12%; height: 45%;
+            background: linear-gradient(to right, #64748b, #94a3b8);
+            border: 3px solid #334155;
+            display: flex; flex-direction: column;
+        }
         .locker-door { flex: 1; border-bottom: 2px solid #475569; position: relative; }
         .locker-vents { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: 40%; height: 20%; background: repeating-linear-gradient(to bottom, transparent, transparent 2px, #334155 2px, #334155 4px); }
         .locker-lock { position: absolute; top: 50%; right: 10%; width: 15%; height: 15%; background: #cbd5e1; border-radius: 50%; border: 2px solid #1e293b;}
 
-        .obj-desk { bottom: 5%; right: 5%; width: 28%; height: 25%; }
+        .obj-desk {
+            bottom: 5%; right: 5%; width: 28%; height: 25%;
+        }
         .desk-top { width: 100%; height: 30%; background: linear-gradient(to bottom, #d97706, #b45309); border-radius: 8px; position: absolute; top: 0; z-index: 2; border-bottom: 6px solid #78350f;}
         .desk-leg { width: 8%; height: 70%; background: #1e293b; position: absolute; bottom: 0; }
         .desk-monitor { position: absolute; top: -50%; left: 30%; width: 40%; height: 60%; background: #0f172a; border: 4px solid #334155; border-radius: 4px; z-index: 1;}
         .desk-paper { position: absolute; top: -5%; left: 10%; width: 20%; height: 20%; background: white; transform: rotate(-15deg); z-index: 3; box-shadow: 1px 1px 3px rgba(0,0,0,0.3);}
 
-        .obj-cart { bottom: 12%; left: 30%; width: 18%; height: 20%; background: rgba(15, 23, 42, 0.4); border: 4px solid #cbd5e1; border-radius: 8px; display: flex; flex-wrap: wrap; padding: 4px; gap: 2px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+        .obj-cart {
+            bottom: 12%; left: 30%; width: 18%; height: 20%;
+            background: rgba(15, 23, 42, 0.4);
+            border: 4px solid #cbd5e1;
+            border-radius: 8px;
+            display: flex; flex-wrap: wrap; padding: 4px; gap: 2px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+        }
         .cart-ball { width: 25px; height: 25px; border-radius: 50%; box-shadow: inset -2px -2px 5px rgba(0,0,0,0.3); }
         .cart-bars { position: absolute; inset: 0; background: repeating-linear-gradient(to right, transparent, transparent 15px, #cbd5e1 15px, #cbd5e1 19px); pointer-events: none;}
         .cart-lock { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 20px; height: 25px; background: #fbbf24; border: 2px solid #b45309; border-radius: 4px; z-index: 5;}
-
-
-        /* --- חפצים ריאליסטיים בתוך המודאלים (חלונות התקריב) --- */
-        
-        /* לוח מחיק */
-        .realistic-whiteboard {
-            background-color: #ffffff;
-            border: 12px solid #cbd5e1;
-            border-radius: 8px;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.05), 0 10px 25px rgba(0,0,0,0.2);
-            position: relative;
-        }
-        .marker-red { color: #ef4444; }
-        .marker-blue { color: #3b82f6; }
-        .marker-green { color: #10b981; }
-        
-        /* עץ שולחן */
-        .wood-texture {
-            background-color: #78350f;
-            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 4px);
-            border: 8px solid #451a03;
-            border-radius: 12px;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
-        }
-
-        /* פתקים */
-        .sticky-note {
-            background: linear-gradient(135deg, #fef08a, #fde047);
-            box-shadow: 2px 4px 10px rgba(0,0,0,0.3);
-            transform: rotate(-3deg);
-            transition: transform 0.3s;
-        }
-        .sticky-note:hover { transform: rotate(0deg) scale(1.05); z-index: 10; }
-
-        .torn-paper {
-            background: white;
-            box-shadow: 1px 3px 8px rgba(0,0,0,0.2);
-            border-bottom: 4px dashed #cbd5e1;
-            transform: rotate(2deg);
-        }
-        
-        /* מסגרת תמונה */
-        .photo-frame {
-            background: white;
-            border: 12px solid #451a03;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.2);
-            transform: rotate(4deg);
-        }
-
-        /* מנעולים דיגיטליים ומתכת */
-        .metal-panel {
-            background: linear-gradient(135deg, #94a3b8, #64748b);
-            border: 4px solid #475569;
-            border-radius: 8px;
-            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.3), inset -2px -2px 5px rgba(0,0,0,0.4), 0 10px 20px rgba(0,0,0,0.4);
-        }
-        .engraved-text {
-            color: #475569;
-            text-shadow: -1px -1px 1px rgba(255,255,255,0.2), 1px 1px 1px rgba(0,0,0,0.5);
-        }
-        .digital-screen {
-            background-color: #022c22;
-            color: #34d399;
-            font-family: monospace;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
-            border: 4px solid #1e293b;
-        }
-        
-        /* קורא כרטיסים */
-        .card-reader {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,0.1);
-            border: 2px solid #334155;
-        }
-        .led-indicator {
-            width: 16px; height: 16px; border-radius: 50%;
-            box-shadow: 0 0 10px currentColor;
-        }
-
     </style>
 </head>
-<body class="min-h-screen text-slate-800 flex flex-col items-center justify-center p-4 relative">
+<body class="min-h-screen text-slate-800 overflow-x-hidden relative flex flex-col items-center justify-center p-4">
 
     <!-- ================= מסך פתיחה ================= -->
     <div id="start-screen" class="absolute inset-0 z-50 flex items-center justify-center modal-overlay">
@@ -218,7 +165,7 @@
             <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">ננעלת באולם!</h1>
             <p class="text-lg text-slate-600 mb-8 leading-relaxed">
                 האולם ריק, הדלת נעולה ויש לך בדיוק 15 דקות למצוא דרך החוצה לפני שהאזעקה תופעל.<br>
-                <strong>הוראות:</strong> החדר הזה הוא לא רק טקסט. לחצי על החפצים השונים, חפשי פתקים, שרטוטים, ומנעולים מציאותיים כדי לפענח את הדרך החוצה.
+                <strong>הוראות:</strong> לחצי על החפצים השונים בחדר כדי לחקור אותם, מצאי רמזים ופתרי את הקודים.
             </p>
             <button onclick="startGame()" class="bg-gradient-to-r from-teal-400 to-emerald-500 text-white text-xl font-bold px-10 py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all">
                 התחל את המשחק
@@ -235,7 +182,7 @@
             <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">הצלחת לברוח!</h1>
             <p class="text-lg text-slate-600 mb-8 leading-relaxed">
                 כל הכבוד! פתרת את כל החידות, פתחת את המנעולים והצלחת לפתוח את דלת האולם בזמן.
-                פיצפץ ודפנה גאים בך!
+                את מוכנה למשחק של מחר!
             </p>
             <div class="text-emerald-600 font-bold text-3xl mb-8" id="final-time">
                 <!-- הזמן הנותר יוצג כאן -->
@@ -247,7 +194,7 @@
     </div>
 
     <!-- ================= חדר המשחק המרכזי ================= -->
-    <div id="game-screen" class="hidden w-full max-w-5xl mx-auto flex flex-col gap-6 animate-in fade-in duration-1000 z-10 relative">
+    <div id="game-screen" class="hidden w-full max-w-5xl mx-auto flex flex-col gap-6 animate-in fade-in duration-1000">
         
         <!-- Status Bar -->
         <header class="bg-slate-800 rounded-3xl p-4 shadow-xl border border-slate-700 flex flex-wrap justify-between items-center gap-4 text-white">
@@ -283,7 +230,7 @@
 
             <!-- Whiteboard -->
             <div class="interactive-object obj-whiteboard" onclick="openModal('modal-whiteboard')">
-                <span class="obj-tooltip">הלוח המחיק</span>
+                <span class="obj-tooltip">לוח תכנון</span>
                 <div class="w-full flex justify-between mb-2">
                     <div class="w-3 h-3 bg-red-400 rounded-full"></div>
                     <div class="w-3 h-3 bg-blue-400 rounded-full"></div>
@@ -292,16 +239,17 @@
                 <div class="wb-text w-full"></div>
                 <div class="wb-text w-5/6"></div>
                 <div class="wb-text w-1/2"></div>
-                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1/3 bg-slate-300 border-t border-slate-400 h-2"></div>
+                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1/3 height-2 bg-slate-300 border-t border-slate-400 h-2"></div> <!-- מדף טושים -->
             </div>
 
-            <!-- Exit Door -->
+            <!-- Door -->
             <div class="interactive-object obj-door" onclick="openModal('modal-door')">
-                <span class="obj-tooltip">דלת יציאה רשאית</span>
+                <span class="obj-tooltip">דלת יציאה</span>
                 <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-green-600 text-white font-mono text-xs font-bold px-4 py-1 border-2 border-green-800 rounded shadow-[0_0_15px_rgba(22,163,74,0.8)]">EXIT</div>
                 <div class="obj-door-window"></div>
                 <div class="obj-door-handle"></div>
                 <div class="obj-door-keypad">
+                    <!-- כפתורים קטנים מדוייקים לקודן -->
                     <div class="keypad-btn"></div><div class="keypad-btn"></div><div class="keypad-btn"></div>
                     <div class="keypad-btn"></div><div class="keypad-btn"></div><div class="keypad-btn"></div>
                     <div class="keypad-btn"></div><div class="keypad-btn"></div><div class="keypad-btn"></div>
@@ -310,7 +258,7 @@
 
             <!-- Locker -->
             <div class="interactive-object obj-locker" onclick="openModal('modal-locker')">
-                <span class="obj-tooltip">ארון אישי ממתכת</span>
+                <span class="obj-tooltip">ארון אישי</span>
                 <div class="locker-door"><div class="locker-vents"></div></div>
                 <div class="locker-door"><div class="locker-vents"></div><div class="locker-lock"></div></div>
                 <div class="locker-door"><div class="locker-vents"></div></div>
@@ -332,8 +280,9 @@
 
             <!-- Ball Cart -->
             <div class="interactive-object obj-cart" onclick="openModal('modal-cart')">
-                <span class="obj-tooltip">עגלת כדורים נעולה</span>
+                <span class="obj-tooltip">עגלת כדורים</span>
                 <div class="cart-lock" id="cart-lock-visual"></div>
+                <!-- כדורים -->
                 <div class="cart-ball bg-yellow-400"></div><div class="cart-ball bg-blue-500"></div>
                 <div class="cart-ball bg-white"></div><div class="cart-ball bg-yellow-400"></div>
                 <div class="cart-ball bg-blue-500"></div><div class="cart-ball bg-white"></div>
@@ -343,224 +292,151 @@
         </main>
     </div>
 
-    <!-- ================= מודאלים (חלונות תקריב מציאותיים) ================= -->
+    <!-- ================= מודאלים (חלונות קופצים לחידות) - נשארו ללא שינוי מהותי ================= -->
     
-    <!-- תקריב על הלוח המחיק -->
+    <!-- Whiteboard Modal -->
     <div id="modal-whiteboard" class="hidden fixed inset-0 z-50 items-center justify-center modal-overlay p-4">
-        <button onclick="closeModal('modal-whiteboard')" class="absolute top-6 left-6 text-white hover:text-rose-400 bg-slate-800/50 p-3 rounded-full transition-colors z-50"><i data-lucide="x" class="w-8 h-8"></i></button>
-        
-        <div class="realistic-whiteboard w-full max-w-2xl min-h-[400px] p-8 flex flex-col items-center justify-center relative handwriting text-slate-800 text-center animate-in zoom-in duration-300">
-            <!-- מדף טושים למטה -->
-            <div class="absolute bottom-0 left-0 w-full h-4 bg-slate-200 border-t-2 border-slate-300 flex items-center justify-center gap-4">
-                <div class="w-10 h-2 bg-red-500 rounded-sm"></div>
-                <div class="w-10 h-2 bg-blue-500 rounded-sm"></div>
-            </div>
-
-            <h2 class="text-4xl marker-blue font-bold mb-6 underline decoration-wavy decoration-blue-300">הוראות לאימון מסכם!</h2>
+        <div class="bg-white w-full max-w-lg rounded-[2rem] p-8 shadow-2xl relative">
+            <button onclick="closeModal('modal-whiteboard')" class="absolute top-6 left-6 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h2 class="text-3xl font-bold text-blue-800 mb-6 flex items-center gap-3"><i data-lucide="presentation" class="text-blue-500"></i> הלוח של המאמן</h2>
             
-            <!-- שרטוט מגרש כדורעף -->
-            <div class="border-4 border-slate-700 w-64 h-32 relative mx-auto mb-8 flex">
-                <div class="w-1/2 h-full border-l-4 border-slate-700 flex items-center justify-center">
-                    <span class="marker-red text-2xl absolute -top-8 w-full text-center">אורך: 18 מטר</span>
-                </div>
-                <div class="w-1/2 h-full flex items-center justify-center">
-                    <span class="marker-red text-2xl absolute -right-24 top-10 transform -rotate-90">רוחב: 9 מטר</span>
-                </div>
-                <!-- שחקנים (X) -->
-                <div class="absolute inset-0 flex flex-wrap content-around justify-around opacity-60">
-                    <div class="marker-blue">X</div><div class="marker-blue">X</div><div class="marker-blue">X</div>
-                    <div class="marker-blue">X</div><div class="marker-blue">X</div><div class="marker-blue">X</div>
-                </div>
+            <div class="bg-blue-50 border border-blue-100 p-6 rounded-2xl text-slate-700 space-y-4 font-medium text-lg marker:text-blue-500">
+                <p class="font-bold text-xl mb-4 border-b border-blue-200 pb-2">תזכורת לשחקנים לקראת מחר!</p>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>מידות המגרש הסטנדרטיות שלנו שבהן נשחק מחר הן <strong class="text-blue-800 text-xl">18</strong> מטר אורך על <strong class="text-blue-800 text-xl">9</strong> מטר רוחב. נא להכיר כל סנטימטר!</li>
+                    <li>לא לשכוח את חוקי הברזל: חייבים לשמור על עמדות - בדיוק <strong class="text-blue-800 text-xl">6</strong> שחקנים מפוקסים על המגרש לכל קבוצה.</li>
+                    <li>אסור לבזבז! יש לנו מקסימום <strong class="text-blue-800 text-xl">3</strong> נגיעות בכדור לפני שהוא חייב לעבור את הרשת.</li>
+                    <li>במידה ונגיע למערכה חמישית ומכרעת (שובר שוויון) - זכרו שהיא קצרה! משחקים רק עד <strong class="text-blue-800 text-xl">15</strong> נקודות.</li>
+                </ul>
             </div>
-
-            <div class="flex flex-wrap justify-center gap-8 text-2xl w-full">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="arrow-left" class="marker-green"></i> <span><span class="marker-green text-3xl font-bold">6</span> שחקנים על המגרש</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <i data-lucide="arrow-left" class="marker-red"></i> <span>מקסימום <span class="marker-red text-3xl font-bold">3</span> נגיעות</span>
-                </div>
-            </div>
-            <div class="mt-4 border-2 border-dashed border-blue-400 p-2 rounded-xl inline-block transform rotate-2">
-                <span>מערכה מכרעת? משחקים רק עד <strong class="marker-blue text-4xl">15</strong> נקודות!</span>
-            </div>
+            <button onclick="closeModal('modal-whiteboard')" class="mt-6 w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-full hover:bg-slate-200 transition-colors">הבנתי, חזרה לחדר</button>
         </div>
     </div>
 
-    <!-- תקריב על שולחן המאמן -->
+    <!-- Desk Modal -->
     <div id="modal-desk" class="hidden fixed inset-0 z-50 items-center justify-center modal-overlay p-4">
-        <button onclick="closeModal('modal-desk')" class="absolute top-6 left-6 text-white hover:text-rose-400 bg-slate-800/50 p-3 rounded-full transition-colors z-50"><i data-lucide="x" class="w-8 h-8"></i></button>
-        
-        <!-- עץ השולחן -->
-        <div class="wood-texture w-full max-w-3xl min-h-[500px] p-10 relative flex items-center justify-center gap-8 flex-wrap animate-in slide-in-from-bottom duration-300">
+        <div class="bg-white w-full max-w-lg rounded-[2rem] p-8 shadow-2xl relative">
+            <button onclick="closeModal('modal-desk')" class="absolute top-6 left-6 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h2 class="text-3xl font-bold text-amber-800 mb-6 flex items-center gap-3"><i data-lucide="monitor" class="text-amber-500"></i> שולחן המאמן</h2>
             
-            <!-- פתק דביק (Sticky Note) -->
-            <div class="sticky-note w-48 h-48 p-4 flex flex-col absolute top-10 right-10">
-                <div class="w-full h-4 bg-yellow-200/50 mb-2"></div> <!-- פס הדבקה מדומיין -->
-                <p class="handwriting text-slate-800 text-xl leading-snug">
-                    <strong class="text-red-600">סוד ההגנה:</strong><br>
-                    מי שקופץ לעצור את ההנחתה של היריב ליד הרשת מנצח לנו את המשחק!
-                </p>
-                <i data-lucide="pen-tool" class="text-slate-400 w-4 h-4 mt-auto self-end"></i>
-            </div>
-
-            <!-- קרע נייר קטן -->
-            <div class="torn-paper p-6 max-w-[200px] absolute bottom-10 left-10">
-                <p class="handwriting text-blue-800 text-xl text-center">
-                    קוד מנעול ארון:<br>
-                    <span class="text-sm sans-serif text-slate-500">(השארתי רמז חרוט על המתכת בארון)</span>
-                </p>
-            </div>
-
-            <!-- מסגרת תמונה (פיצפץ ודפנה) -->
-            <div class="photo-frame p-3 flex flex-col items-center justify-center z-10 w-64">
-                <div class="bg-pink-100 w-full h-40 flex items-center justify-center border-4 border-pink-200 relative overflow-hidden">
-                    <div class="absolute top-2 left-2 text-pink-300 opacity-50"><i data-lucide="paw-print"></i></div>
-                    <div class="absolute bottom-2 right-2 text-pink-300 opacity-50"><i data-lucide="paw-print"></i></div>
-                    
-                    <div class="flex items-end gap-2 text-slate-700">
-                        <i data-lucide="cat" class="w-16 h-16 text-amber-600"></i>
-                        <i data-lucide="cat" class="w-12 h-12 text-slate-500"></i>
+            <div class="space-y-4">
+                <div class="bg-[#fff9f0] border border-amber-100 p-5 rounded-2xl text-slate-700 flex gap-4 items-start">
+                    <div class="bg-amber-100 p-2 rounded-xl text-amber-600 mt-1"><i data-lucide="sticky-note"></i></div>
+                    <div>
+                        <p class="font-bold text-amber-900 mb-1">פתק קרוע מתחת למקלדת:</p>
+                        <p class="italic">"אל תשכחו... מי שקופץ גבוה על הרשת כדי לעצור את ההנחתה של היריב - מנצח את המשחק! פעולת ההגנה הזו היא המפתח המרכזי העונה."</p>
                     </div>
                 </div>
-                <div class="mt-3 bg-white w-full text-center py-1 border-t border-slate-200">
-                    <p class="handwriting text-2xl text-slate-800">פיצפץ ודפנה! 🐾</p>
+
+                <div class="bg-pink-50 border border-pink-100 p-5 rounded-2xl text-slate-700 flex gap-4 items-start">
+                    <div class="bg-pink-100 p-2 rounded-xl text-pink-600 mt-1"><i data-lucide="image"></i></div>
+                    <div>
+                        <p class="font-bold text-pink-900 mb-1">מסגרת תמונה קטנה:</p>
+                        <p class="text-sm">יש כאן תמונה מקסימה של שני חתולים ישנים אחד על השני. למטה כתוב: <strong class="text-pink-600">"פיצפץ ודפנה - המעודדים הראשיים שלנו! 🐾"</strong></p>
+                    </div>
                 </div>
             </div>
-
+            <button onclick="closeModal('modal-desk')" class="mt-6 w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-full hover:bg-slate-200 transition-colors">סגור</button>
         </div>
     </div>
 
-    <!-- תקריב על הארון ממתכת -->
+    <!-- Locker Modal -->
     <div id="modal-locker" class="hidden fixed inset-0 z-50 items-center justify-center modal-overlay p-4">
-        <button onclick="closeModal('modal-locker')" class="absolute top-6 left-6 text-white hover:text-rose-400 bg-slate-800/50 p-3 rounded-full transition-colors z-50"><i data-lucide="x" class="w-8 h-8"></i></button>
-        
-        <div class="metal-panel w-full max-w-md p-10 flex flex-col items-center justify-center relative animate-in zoom-in duration-300">
-            <!-- חריצי אוורור ממתכת -->
-            <div class="flex gap-2 w-full mb-8 opacity-50 justify-center">
-                <div class="w-4 h-20 bg-slate-800 rounded-full shadow-inner"></div>
-                <div class="w-4 h-20 bg-slate-800 rounded-full shadow-inner"></div>
-                <div class="w-4 h-20 bg-slate-800 rounded-full shadow-inner"></div>
-                <div class="w-4 h-20 bg-slate-800 rounded-full shadow-inner"></div>
-            </div>
-
-            <!-- החידה (מנעול כספת) -->
-            <div id="locker-puzzle" class="w-full text-center">
-                <!-- טקסט חרוט במתכת -->
-                <p class="engraved-text text-2xl font-bold mb-8 uppercase tracking-widest text-center" dir="ltr">
-                    LENGTH : WIDTH
-                </p>
-                
-                <div class="bg-slate-800 p-6 rounded-2xl border-4 border-slate-900 shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
-                    <input type="text" id="locker-input" class="w-full bg-slate-200 border-inner shadow-[inset_0_5px_10px_rgba(0,0,0,0.5)] text-5xl text-center font-mono font-bold text-slate-900 rounded-lg p-4 focus:outline-none focus:bg-white tracking-[0.5em]" placeholder="0000" maxlength="4" autocomplete="off">
-                    <p id="locker-error" class="text-red-400 text-sm font-bold mt-4 text-center hidden"></p>
+        <div class="bg-white w-full max-w-lg rounded-[2rem] p-8 shadow-2xl relative">
+            <button onclick="closeModal('modal-locker')" class="absolute top-6 left-6 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center gap-3"><i data-lucide="lock" class="text-slate-500" id="icon-locker"></i> ארון אישי</h2>
+            
+            <div id="locker-puzzle" class="space-y-6">
+                <div class="bg-slate-50 border border-slate-200 p-5 rounded-2xl text-slate-800">
+                    <p class="font-bold mb-2 flex items-center gap-2"><i data-lucide="info" class="w-5 h-5 text-slate-500"></i> רמז חרוט על המנעול:</p>
+                    <p>"קוד פתיחה 4 ספרות: שתי הספרות הראשונות הן <strong class="underline">אורך המגרש</strong>, ואחריהן <strong class="underline">רוחב המגרש</strong> (נא לכלול אפס לפני מספר חד-ספרתי)."</p>
                 </div>
                 
-                <button onclick="checkLocker()" class="mt-8 bg-gradient-to-b from-slate-300 to-slate-500 border-2 border-slate-600 text-slate-900 font-black text-xl py-4 px-10 rounded-full shadow-[0_5px_10px_rgba(0,0,0,0.4)] hover:scale-105 transition-transform uppercase tracking-wider">
-                    Unlock
-                </button>
+                <div>
+                    <label class="block text-slate-600 font-bold mb-2">הכניסי קוד בן 4 ספרות:</label>
+                    <input type="number" id="locker-input" class="w-full bg-slate-100 border-2 border-slate-300 text-3xl text-center font-mono font-bold text-slate-800 rounded-xl p-4 focus:outline-none focus:border-slate-500 focus:bg-white transition-colors" placeholder="0000" maxlength="4">
+                    <p id="locker-error" class="text-red-500 text-sm font-bold mt-2 text-center hidden"></p>
+                </div>
+                
+                <button onclick="checkLocker()" class="w-full bg-slate-800 text-white font-bold text-xl py-4 rounded-full hover:bg-slate-900 hover:shadow-lg transition-all shadow-md">פתח מנעול</button>
             </div>
 
-            <!-- סיום מנעול (הארון נפתח) -->
-            <div id="locker-success" class="hidden flex-col items-center text-center w-full bg-slate-900 p-8 rounded-xl shadow-inner border-2 border-slate-700">
-                <i data-lucide="unlock" class="text-emerald-400 w-16 h-16 mb-4"></i>
-                <div class="torn-paper p-4 rotate-0 w-full mb-6">
-                    <p class="handwriting text-red-700 text-xl">קוד לעגלת הציוד:</p>
-                    <p class="font-mono font-bold text-lg text-slate-800 text-center mt-2" dir="ltr">
-                        [Players] + [Touches] + [5th set Points]
+            <div id="locker-success" class="hidden space-y-6 text-center py-4">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="unlock" class="w-10 h-10"></i></div>
+                <h3 class="text-2xl font-bold text-slate-800">הארון נפתח!</h3>
+                <div class="bg-amber-50 p-6 rounded-2xl border border-amber-100 text-right">
+                    <p class="text-slate-600 mb-2">בתוך הארון מצאת פתק מקופל שכתוב עליו הרמז לקוד של עגלת הכדורים:</p>
+                    <p class="font-mono font-bold text-lg text-amber-800 bg-white p-4 rounded-xl border border-amber-200 inline-block w-full text-center" dir="ltr">
+                        [Players on court] + [Max touches] + [Points to win 5th set]
                     </p>
+                    <p class="text-sm text-slate-500 mt-2 text-center">(חברי את שלושת המספרים האלו ברצף לקבלת קוד בעל 4 ספרות)</p>
                 </div>
-                <button onclick="closeModal('modal-locker')" class="w-full bg-slate-600 text-white font-bold py-3 rounded-full hover:bg-slate-500 transition-colors">סגור דלת</button>
+                <button onclick="closeModal('modal-locker')" class="w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-full hover:bg-slate-200 transition-colors">מעולה, סגור</button>
             </div>
         </div>
     </div>
 
-    <!-- תקריב על עגלת הכדורים -->
+    <!-- Ball Cart Modal -->
     <div id="modal-cart" class="hidden fixed inset-0 z-50 items-center justify-center modal-overlay p-4">
-        <button onclick="closeModal('modal-cart')" class="absolute top-6 left-6 text-white hover:text-rose-400 bg-slate-800/50 p-3 rounded-full transition-colors z-50"><i data-lucide="x" class="w-8 h-8"></i></button>
-        
-        <!-- סורגים של העגלה -->
-        <div class="relative w-full max-w-sm h-[500px] flex items-center justify-center overflow-hidden rounded-2xl animate-in slide-in-from-bottom duration-300">
-            <!-- כדורים ברקע פנימה -->
-            <div class="absolute inset-0 bg-slate-900 flex flex-wrap content-center justify-center gap-4 p-8 opacity-80">
-                <div class="w-20 h-20 bg-yellow-400 rounded-full shadow-inner"></div>
-                <div class="w-20 h-20 bg-blue-500 rounded-full shadow-inner"></div>
-                <div class="w-20 h-20 bg-white rounded-full shadow-inner"></div>
-                
-                <!-- הכרטיס המגנטי מציץ מאחור! -->
-                <div id="cart-hidden-card" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-amber-400 w-24 h-32 rounded-xl border-4 border-white shadow-2xl flex items-center justify-center rotate-12 z-0">
-                    <i data-lucide="credit-card" class="text-white w-10 h-10"></i>
-                </div>
-            </div>
+        <div class="bg-white w-full max-w-lg rounded-[2rem] p-8 shadow-2xl relative">
+            <button onclick="closeModal('modal-cart')" class="absolute top-6 left-6 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h2 class="text-3xl font-bold text-purple-800 mb-6 flex items-center gap-3"><i data-lucide="archive" class="text-purple-500" id="icon-cart"></i> עגלת כדורים</h2>
             
-            <!-- סורגים פיזיים קדימה -->
-            <div class="absolute inset-0" style="background: repeating-linear-gradient(to right, transparent, transparent 45px, #cbd5e1 45px, #cbd5e1 55px); box-shadow: inset 0 0 50px rgba(0,0,0,0.8); z-index: 10; pointer-events: none;"></div>
-
-            <!-- המנעול הדיגיטלי תלוי על הסורגים -->
-            <div id="cart-puzzle" class="bg-[#1e293b] p-6 border-4 border-slate-600 rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.8)] z-20 w-3/4 flex flex-col items-center">
-                <div class="w-full h-4 bg-slate-900 rounded-full mb-6 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 h-full bg-red-500 w-1/2"></div> <!-- סתם עיצוב -->
+            <div id="cart-puzzle" class="space-y-6">
+                <div class="bg-purple-50 border border-purple-100 p-5 rounded-2xl text-purple-900">
+                    <p>קופסת הפלדה הזו ננעלת בקוד אלקטרוני. את צריכה למצוא את הקוד כדי להגיע למה שבפנים!</p>
                 </div>
-                <p class="text-slate-400 text-xs font-mono mb-2 uppercase">Secure Access Code</p>
-                <input type="text" id="cart-input" class="digital-screen w-full text-4xl text-center rounded p-4 mb-4 tracking-[0.3em]" placeholder="----" maxlength="4" autocomplete="off">
-                <p id="cart-error" class="text-red-500 text-sm font-bold mt-2 text-center hidden"></p>
                 
-                <button onclick="checkCart()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-mono font-bold py-3 rounded border-b-4 border-slate-800 active:border-b-0 active:mt-1 transition-all">
-                    ENTER
+                <div>
+                    <label class="block text-slate-600 font-bold mb-2">הקלידי קוד:</label>
+                    <input type="number" id="cart-input" class="w-full bg-slate-50 border-2 border-slate-200 text-3xl text-center font-mono font-bold text-slate-800 rounded-xl p-4 focus:outline-none focus:border-purple-400 focus:bg-white transition-colors" placeholder="****">
+                    <p id="cart-error" class="text-red-500 text-sm font-bold mt-2 text-center hidden"></p>
+                </div>
+                
+                <button onclick="checkCart()" class="w-full bg-purple-500 text-white font-bold text-xl py-4 rounded-full hover:bg-purple-600 hover:shadow-lg transition-all shadow-md">פתח עגלה</button>
+            </div>
+
+            <div id="cart-success" class="hidden space-y-6 text-center py-4">
+                <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce"><i data-lucide="key" class="w-10 h-10"></i></div>
+                <h3 class="text-2xl font-bold text-slate-800">העגלה נפתחה!</h3>
+                <p class="text-slate-600 text-lg">מעולה! בין כל הכדורים, מצאת את <strong class="text-amber-600">הכרטיס המגנטי</strong> של המאמן שפותח את הדלת הראשית.</p>
+                <button onclick="closeModal('modal-cart')" class="w-full bg-amber-500 text-white font-bold py-3 rounded-full hover:bg-amber-600 transition-colors shadow-md">קח את הכרטיס</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exit Door Modal -->
+    <div id="modal-door" class="hidden fixed inset-0 z-50 items-center justify-center modal-overlay p-4">
+        <div class="bg-white w-full max-w-lg rounded-[2rem] p-8 shadow-2xl relative">
+            <button onclick="closeModal('modal-door')" class="absolute top-6 left-6 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center gap-3"><i data-lucide="door-closed" class="text-slate-500"></i> דלת היציאה</h2>
+            
+            <div id="door-no-key" class="space-y-6 text-center">
+                <div class="bg-slate-100 p-6 rounded-2xl mb-4 border border-slate-200">
+                    <i data-lucide="credit-card" class="w-16 h-16 text-slate-400 mx-auto mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-700 mb-2">דרוש כרטיס מגנטי</h3>
+                    <p class="text-slate-500">הדלת נעולה ויש כאן קורא כרטיסים אדום ומהבהב. את חייבת למצוא את הכרטיס המגנטי של המאמן איפשהו באולם כדי להתקדם.</p>
+                </div>
+                <button onclick="closeModal('modal-door')" class="w-full bg-slate-800 text-white font-bold py-3 rounded-full hover:bg-slate-900 transition-colors">חפשי את הכרטיס</button>
+            </div>
+
+            <div id="door-has-key" class="hidden space-y-6">
+                <div class="bg-emerald-50 border border-emerald-100 p-5 rounded-2xl text-emerald-900 text-center">
+                    <p class="text-emerald-600 font-bold flex items-center justify-center gap-2 mb-2"><i data-lucide="check-circle" class="w-5 h-5"></i> העברת כרטיס בהצלחה!</p>
+                    <p>הקודן נדלק! המערכת דורשת גם סיסמת מילה (בעברית) כדי לוודא שאת מהקבוצה:</p>
+                </div>
+                
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center">
+                    <p class="font-bold text-slate-700 mb-2">שאלת אבטחה של האולם:</p>
+                    <p class="text-slate-600 mb-4 text-lg">"מהי פעולת ההגנה שבה שחקן קופץ ליד הרשת כדי לעצור את ההנחתה של היריב?"</p>
+                    <input type="text" id="door-input" class="w-full bg-white border-2 border-emerald-200 text-2xl text-center font-bold text-slate-800 rounded-xl p-4 focus:outline-none focus:border-emerald-500 transition-colors shadow-inner" placeholder="הקלידי מילה בעברית">
+                    <p id="door-error" class="text-red-500 text-sm font-bold mt-2 text-center hidden"></p>
+                </div>
+                
+                <button onclick="checkDoor()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xl py-4 rounded-full hover:shadow-lg hover:scale-105 transition-all shadow-md flex items-center justify-center gap-2">
+                    <i data-lucide="log-out"></i> פתח את הדלת וברח!
                 </button>
             </div>
-
-            <!-- כשנפתח -->
-            <div id="cart-success" class="hidden flex-col items-center bg-slate-800/90 p-8 rounded-xl z-30 backdrop-blur-md border border-slate-600 text-center">
-                <div class="bg-amber-400 p-4 rounded-full shadow-[0_0_30px_rgba(251,191,36,0.6)] mb-4 animate-bounce">
-                    <i data-lucide="key" class="text-amber-900 w-10 h-10"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-2">נפתח!</h3>
-                <p class="text-slate-300 mb-6">לקחת את כרטיס המאסטר המגנטי.</p>
-                <button onclick="closeModal('modal-cart')" class="w-full bg-amber-500 text-slate-900 font-bold py-3 rounded-full hover:bg-amber-400 transition-colors">הכנס לתרמיל</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- תקריב על הדלת (קורא כרטיסים) -->
-    <div id="modal-door" class="hidden fixed inset-0 z-50 items-center justify-center modal-overlay p-4">
-        <button onclick="closeModal('modal-door')" class="absolute top-6 left-6 text-white hover:text-rose-400 bg-slate-800/50 p-3 rounded-full transition-colors z-50"><i data-lucide="x" class="w-8 h-8"></i></button>
-        
-        <!-- הקיר הלבן של הדלת -->
-        <div class="bg-slate-100 w-full max-w-md p-12 rounded-lg border-x-8 border-slate-300 shadow-2xl relative flex flex-col items-center justify-center animate-in slide-in-from-right duration-500 min-h-[400px]">
-            
-            <div class="card-reader text-center w-full">
-                <!-- נורה -->
-                <div class="flex justify-center gap-4 mb-6">
-                    <div id="door-led" class="led-indicator text-red-500 bg-red-500"></div>
-                </div>
-
-                <!-- מצב 1: אין כרטיס -->
-                <div id="door-no-key">
-                    <div class="w-full h-2 bg-slate-900 rounded-full mb-8 shadow-inner"></div> <!-- חריץ לכרטיס -->
-                    <h3 class="text-slate-300 font-mono text-lg mb-2 uppercase">System Locked</h3>
-                    <p class="text-slate-500 text-sm">Please swipe master card</p>
-                </div>
-
-                <!-- מצב 2: יש כרטיס - שאלת אבטחה -->
-                <div id="door-has-key" class="hidden">
-                    <div class="digital-screen p-4 rounded text-sm mb-6 flex flex-col items-center">
-                        <span class="text-emerald-400 mb-2">>> CARD ACCEPTED</span>
-                        <span class="text-slate-300 text-xs text-center leading-relaxed">
-                            Security Question:<br>
-                            פעולת הגנה - קפיצה ליד הרשת לעצירת הנחתה?
-                        </span>
-                    </div>
-                    
-                    <input type="text" id="door-input" class="w-full bg-slate-900 border-2 border-slate-700 text-white text-center font-bold rounded p-3 mb-4 focus:outline-none focus:border-emerald-500 transition-colors" placeholder="הקלד כאן..." autocomplete="off">
-                    <p id="door-error" class="text-red-500 text-xs font-bold mt-2 text-center hidden"></p>
-                    
-                    <button onclick="checkDoor()" class="w-full bg-emerald-600 text-white font-mono font-bold py-3 rounded mt-2 hover:bg-emerald-500 hover:shadow-[0_0_15px_rgba(16,185,129,0.5)] transition-all">
-                        OVERRIDE & OPEN
-                    </button>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -598,6 +474,7 @@
         function startGame() {
             document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('game-screen').classList.add('flex');
             startTimer();
         }
 
@@ -606,16 +483,11 @@
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             
-            // עדכון נראות קורא הכרטיסים אם השגנו כרטיס
-            if (id === 'modal-door' && hasKeycard) {
-                document.getElementById('door-no-key').classList.add('hidden');
-                document.getElementById('door-has-key').classList.remove('hidden');
-                document.getElementById('door-has-key').classList.add('flex', 'flex-col');
-                
-                // שינוי נורה לירוק!
-                const led = document.getElementById('door-led');
-                led.classList.replace('text-red-500', 'text-emerald-500');
-                led.classList.replace('bg-red-500', 'bg-emerald-500');
+            if (id === 'modal-door') {
+                if (hasKeycard) {
+                    document.getElementById('door-no-key').classList.add('hidden');
+                    document.getElementById('door-has-key').classList.remove('hidden');
+                }
             }
         }
 
@@ -643,9 +515,10 @@
                 lockerUnlocked = true;
                 document.getElementById('locker-puzzle').classList.add('hidden');
                 document.getElementById('locker-success').classList.remove('hidden');
-                document.getElementById('locker-success').classList.add('flex');
+                document.getElementById('icon-locker').setAttribute('data-lucide', 'unlock');
+                lucide.createIcons();
             } else {
-                showError('locker-error', 'ERR: CODE INVALID');
+                showError('locker-error', 'קוד שגוי. חפשי רמזים לגבי מידות המגרש בלוח.');
             }
         }
 
@@ -655,21 +528,19 @@
                 cartUnlocked = true;
                 document.getElementById('cart-puzzle').classList.add('hidden');
                 document.getElementById('cart-success').classList.remove('hidden');
-                document.getElementById('cart-success').classList.add('flex');
                 
-                // הסרת המנעול הויזואלי מהסורגים מחוץ למודאל
+                // הסרת המנעול הויזואלי מעגלת הכדורים בחדר
                 document.getElementById('cart-lock-visual').style.display = 'none';
-                
-                // הסתרת הכרטיס המגנטי הויזואלי מתוך הסורגים במודאל
-                document.getElementById('cart-hidden-card').classList.add('hidden');
                 
                 hasKeycard = true;
                 document.getElementById('inventory-text').classList.add('hidden');
                 document.getElementById('inventory-key').classList.remove('hidden');
                 document.getElementById('inventory-key').classList.add('flex');
                 
+                document.getElementById('icon-cart').setAttribute('data-lucide', 'package-open');
+                lucide.createIcons();
             } else {
-                showError('cart-error', 'ACCESS DENIED');
+                showError('cart-error', 'קוד שגוי. קראי היטב את הפתק בארון.');
             }
         }
 
@@ -685,11 +556,12 @@
                 let s = timeLeft % 60;
                 let formattedLeft = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
                 
+                document.getElementById('game-screen').classList.remove('flex');
                 document.getElementById('game-screen').classList.add('hidden');
                 document.getElementById('win-screen').classList.remove('hidden');
                 document.getElementById('final-time').innerText = `נשארו לך ${formattedLeft} דקות בטיימר!`;
             } else {
-                showError('door-error', 'SYSTEM OVERRIDE FAILED');
+                showError('door-error', 'תשובה שגויה. הרמז נמצא איפשהו בחדר...');
             }
         }
     </script>
